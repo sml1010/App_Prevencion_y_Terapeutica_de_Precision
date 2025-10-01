@@ -125,3 +125,22 @@ resultados = determinar_genotipo_definitivo(dict_pacientes)
 resultados_formateados = formatear_genotipos(resultados)
 
 print(resultados_formateados)
+
+
+df = pd.read_excel("CYP2D6_Diplotype_Phenotype_Table.xlsx")
+diccionario_CYP2D6 = dict(zip(df.iloc[:, 0], df.iloc[:, 2]))
+def fenotipo (genotipo):
+    Sol = []
+    diccionario = genotipo
+    for nombre in diccionario:
+        for clave in diccionario[nombre]:
+            lista = diccionario[nombre][clave].split('/')    #Me genera una lista de dos cosas izq madre, drch padre
+            if clave == 'DPYD'  or clave == 'UGT1A1 ':
+                if lista[0] == *1 and lista[1] == *1:                      #Esto me de error, pero sera porque deberia ponerlo en str?
+                    Sol[nombre][clave] = 'Metabolizador normal'
+                elif lista[0] != *1 and lista[1] != *1:
+                    Sol[nombre][clave] = 'Metabolizador lento'
+                else:
+                    Sol[nombre][clave] = 'Metabolizador intermedio'  
+            else:
+                Sol[nombre][clave] = diccionario_CYP2D6[diccionario[nombre][clave]]
