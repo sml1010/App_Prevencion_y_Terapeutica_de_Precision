@@ -7,7 +7,7 @@ def lectura_csv(path):
     datos_dict = {df["Sample/Assay"][i]: {df.columns[j]: df[df.columns[j]][i] for j in range(1, len(df.columns))} for i in range(len(df))}
     # Tabla con las variantes y sus mutaciones asociadas
     tabla = {"CYP2D6": {"3": ["_"], "4": ["T"], "6": [ "_"], "7": ["G"],
-                    "8": ["A"], "9": ["_"], "10*4": ["A"], "10": ["C"],
+                    "8": ["A"], "9": ["_"], "10*4": ["A"], "10": ["G"],
                     "12": ["T"], "14": ["T"], "15": ["_"], "17": ["A"],
                     "19": ["_"], "29": ["A"], "41": ["T"], "56B": ["A"],
                     "59": ["T"]},
@@ -67,8 +67,9 @@ def determinar_genotipo_definitivo(datos_pacientes):
         
         for gen, alelos in genes.items():
             # Recoger todos los alelos únicos, excluyendo *1 cuando hay otros
-            alelos_unicos = list()
-            
+            alelos_maternos_unicos = set()
+            alelos_paternos_unicos = set()
+
             for alelo_materno, alelo_paterno in alelos:
                 # Si ambos son *1, es el caso base (sin mutaciones)
                 if alelo_materno == '*1' and alelo_paterno == '*1':
@@ -77,36 +78,49 @@ def determinar_genotipo_definitivo(datos_pacientes):
                 # Añadir alelos no silvestres
                 
                 if alelo_materno != '*1':
-                    alelos_unicos.append(alelo_materno)
+                    alelos_maternos_unicos.add(alelo_materno)
                 if alelo_paterno != '*1':
-                    alelos_unicos.append(alelo_paterno)
+                    alelos_paternos_unicos.add(alelo_paterno)
 
-                # Manejo de Variante *10*4
-                if gen == "CYP2D6":
-                    if "*10*4" in alelos_unicos and "*10" in alelos_unicos:
-                        alelos_unicos.remove("*10*4")
-                        if "*4" in alelos_unicos:
-                            alelos_unicos.remove("*10")
+            if gen == "CYP2D6":
+                # Manejo de Variante *10*4 Materno
+                if "*10*4" in alelos_maternos_unicos and "*10" in alelos_maternos_unicos:
+                    alelos_maternos_unicos.remove("*10*4")
+                    if "*4" in alelos_maternos_unicos:
+                        alelos_maternos_unicos.remove("*10")
+                # Manejo de Variante *10*4 Paterno 
+                if "*10*4" in alelos_paternos_unicos and "*10" in alelos_paternos_unicos:
+                    alelos_paternos_unicos.remove("*10*4")
+                    if "*4" in alelos_paternos_unicos:
+                        alelos_paternos_unicos.remove("*10")
 
-                # Manejo de variante *80 como *28
-                if gen == "UGT1A1" and alelos_unicos:
-                    for i in range(len(alelos_unicos)):
-                        alelos_unicos[i] = "*28"
-               
-            
+            # Manejo de variante *80 como *28
+            if gen == "UGT1A1":
+                if alelos_maternos_unicos:
+                    alelos_maternos_unicos = list(alelos_maternos_unicos)
+                    alelos_maternos_unicos[0] = "*28"
+                    alelos_maternos_unicos = set(alelos_maternos_unicos)
+                if alelos_paternos_unicos:
+                    alelos_paternos_unicos = list(alelos_paternos_unicos)
+                    alelos_paternos_unicos[0] = "*28"
+                    alelos_paternos_unicos = set(alelos_paternos_unicos)
+
             # Si no hay mutaciones, el genotipo es *1/*1
-            if not alelos_unicos:
+            if not alelos_maternos_unicos and not alelos_paternos_unicos:
                 resultados[paciente][gen] = ('*1', '*1')
             # Si hay una mutación, es heterocigoto *1/mutación
-            elif len(alelos_unicos) == 1:
-                mutacion = list(alelos_unicos)[0]
+            elif alelos_maternos_unicos and not alelos_paternos_unicos:
+                mutacion = list(alelos_maternos_unicos)[0]
                 resultados[paciente][gen] = ('*1', mutacion)
             # Si hay dos mutaciones, es heterocigoto mutación1/mutación2
-            elif len(alelos_unicos) == 2:
-                mutaciones = sorted(list(alelos_unicos))
-                resultados[paciente][gen] = (mutaciones[0], mutaciones[1])
-            
-    
+            elif not alelos_maternos_unicos and alelos_paternos_unicos:
+                mutacion = list(alelos_paternos_unicos)[0]
+                resultados[paciente][gen] = ('*1', mutacion)
+            elif alelos_maternos_unicos and alelos_paternos_unicos:
+                mutacion_materna = list(alelos_maternos_unicos)[0]
+                mutacion_paterna = list(alelos_paternos_unicos)[0]
+                resultados[paciente][gen] = (mutacion_materna, mutacion_paterna)
+
     return resultados
 
 # Función para formatear el resultado como string
@@ -136,9 +150,9 @@ def fenotipo (genotipo):
         for clave in diccionario[nombre]:
             lista = diccionario[nombre][clave].split('/')    #Me genera una lista de dos cosas izq madre, drch padre
             if clave == 'DPYD'  or clave == 'UGT1A1 ':
-                if lista[0] == *1 and lista[1] == *1:                      #Esto me de error, pero sera porque deberia ponerlo en str?
+                if lista[0] == "*1" and lista[1] == "*1":                      #Esto me de error, pero sera porque deberia ponerlo en str?
                     Sol[nombre][clave] = 'Metabolizador normal'
-                elif lista[0] != *1 and lista[1] != *1:
+                elif lista[0] != "*1" and lista[1] != "*1":
                     Sol[nombre][clave] = 'Metabolizador lento'
                 else:
                     Sol[nombre][clave] = 'Metabolizador intermedio'  
