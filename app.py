@@ -93,6 +93,16 @@ def determinar_genotipo_definitivo(datos_pacientes):
                     alelos_paternos_unicos.remove("*10*4")
                     if "*4" in alelos_paternos_unicos:
                         alelos_paternos_unicos.remove("*10")
+                #Manejo si estan en alelos distintos
+                if "*10*4" in alelos_paternos_unicos and "*10" in alelos_maternos_unicos:
+                    alelos_paternos_unicos.remove("*10*4")
+                    if "*4" in alelos_maternos_unicos:
+                        alelos_maternos_unicos.remove("*10")
+                if "*10*4" in alelos_maternos_unicos and "*10" in alelos_paternos_unicos:
+                    alelos_maternos_unicos.remove("*10*4")
+                    if "*4" in alelos_paternos_unicos:
+                        alelos_paternos_unicos.remove("*10")
+
 
             # Manejo de variante *80 como *28
             if gen == "UGT1A1":
@@ -117,6 +127,7 @@ def determinar_genotipo_definitivo(datos_pacientes):
                 mutacion = list(alelos_paternos_unicos)[0]
                 resultados[paciente][gen] = ('*1', mutacion)
             elif alelos_maternos_unicos and alelos_paternos_unicos:
+
                 mutacion_materna = list(alelos_maternos_unicos)[0]
                 mutacion_paterna = list(alelos_paternos_unicos)[0]
                 resultados[paciente][gen] = (mutacion_materna, mutacion_paterna)
@@ -144,17 +155,21 @@ print(resultados_formateados)
 df = pd.read_excel("CYP2D6_Diplotype_Phenotype_Table.xlsx")
 diccionario_CYP2D6 = dict(zip(df.iloc[:, 0], df.iloc[:, 2]))
 def fenotipo (genotipo):
-    Sol = []
+    Sol = {}
     diccionario = genotipo
     for nombre in diccionario:
-        for clave in diccionario[nombre]:
-            lista = diccionario[nombre][clave].split('/')    #Me genera una lista de dos cosas izq madre, drch padre
-            if clave == 'DPYD'  or clave == 'UGT1A1 ':
-                if lista[0] == "*1" and lista[1] == "*1":                      #Esto me de error, pero sera porque deberia ponerlo en str?
-                    Sol[nombre][clave] = 'Metabolizador normal'
-                elif lista[0] != "*1" and lista[1] != "*1":
-                    Sol[nombre][clave] = 'Metabolizador lento'
+        Sol[nombre] = {}
+        for gen in diccionario[nombre]:
+            alelos = diccionario[nombre][gen].split('/')   
+            if gen == 'DPYD'  or gen == 'UGT1A1 ':
+                if alelos[0] == "*1" and alelos[1] == "*1":       
+                    Sol[nombre][gen] = 'Metabolizador normal'
+                elif alelos[0] != "*1" and alelos[1] != "*1":
+                    Sol[nombre][gen] = 'Metabolizador lento'
                 else:
-                    Sol[nombre][clave] = 'Metabolizador intermedio'  
+                    Sol[nombre][gen] = 'Metabolizador intermedio'
             else:
-                Sol[nombre][clave] = diccionario_CYP2D6[diccionario[nombre][clave]]
+                Sol[nombre][gen] = diccionario_CYP2D6[diccionario[nombre][gen]]
+    return Sol
+
+print(fenotipo(resultados_formateados))
