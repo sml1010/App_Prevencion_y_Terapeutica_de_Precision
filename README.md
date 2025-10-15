@@ -16,4 +16,8 @@ paciente.
 - Carmen Ruiz Alonso - cra1009@alu.ubu.ee
 - Yasmina Álamo Navarro - yan1001@alu.ubu.ee
 
+#### Logo App: 
+<img src="https://github.com/sml1010/App_Prevencion_y_Terapeutica_de_Precision/blob/main/LOGO%20APP.png?raw=true" 
+     alt="Logo de la app" width="200">
+     
 ![LOGO APP](https://github.com/sml1010/App_Prevencion_y_Terapeutica_de_Precision/blob/main/LOGO%20APP.png?raw=true)
