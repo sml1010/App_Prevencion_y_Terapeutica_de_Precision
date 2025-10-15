@@ -17,4 +17,4 @@ paciente.
 - Yasmina Álamo Navarro - yan1001@alu.ubu.ee
 
 
-![LOGO APP](https://github.com/user-attachments/assets/d272dd39-1d24-477c-b57e-08d1b0b581b5)
+![LOGO APP]([https://github.com/user-attachments/assets/d272dd39-1d24-477c-b57e-08d1b0b581b5](https://github.com/sml1010/App_Prevencion_y_Terapeutica_de_Precision/blob/main/LOGO%20APP.png))
