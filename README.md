@@ -1,5 +1,5 @@
 <p>
-  <img src="./pics/Cabecera%20Salud.jpg" alt="Cabecera Salud" width="85%">
+  <img src="./pics/Cabecera%20Salud.jpg" alt="Cabecera Salud" width="100%">
 </p>
 
 # App Prevención y Terapéutica de Precisión
