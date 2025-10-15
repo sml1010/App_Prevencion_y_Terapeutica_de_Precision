@@ -1,6 +1,7 @@
-<p align="center">
+<p>
   <img src="./pics/Cabecera%20Salud.jpg" alt="Cabecera Salud" width="85%">
 </p>
+
 # App Prevención y Terapéutica de Precisión
 
 Este repositorio recoge la realización de una aplicación para el taller de implementación de los seminarios teórico-prácticos de la asigantrua de "Prevención y Terapéutica de Precisión" del Grado en Ingeniería de la Salud en la Universidad de Burgos. 
@@ -19,6 +20,6 @@ paciente.
 - Minaya Moreno Romero - mmr1047@alu.ubu.es
 
 #### Logo App: 
-<p align="center">
+<p>
   <img src="./pics/LOGO%20APP.png" alt="Logo App" width="200">
 </p>
