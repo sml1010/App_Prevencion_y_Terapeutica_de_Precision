@@ -20,4 +20,3 @@ paciente.
 <img src="https://github.com/sml1010/App_Prevencion_y_Terapeutica_de_Precision/blob/main/LOGO%20APP.png?raw=true" 
      alt="Logo de la app" width="200">
      
-![LOGO APP](https://github.com/sml1010/App_Prevencion_y_Terapeutica_de_Precision/blob/main/LOGO%20APP.png?raw=true)
